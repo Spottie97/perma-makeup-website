@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import React, { useState } from "react";
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
 const CheckoutForm = () => {
   const stripe = useStripe();
   const elements = useElements();
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [paymentStatus, setPaymentStatus] = useState('');
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -17,7 +17,7 @@ const CheckoutForm = () => {
     }
 
     const { error, paymentMethod } = await stripe.createPaymentMethod({
-      type: 'card',
+      type: "card",
       card: elements.getElement(CardElement),
       billing_details: {
         name: name,
@@ -28,20 +28,25 @@ const CheckoutForm = () => {
     if (error) {
       setErrorMessage(error.message);
     } else {
-      const response = await fetch('/create-payment-intent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ paymentMethodId: paymentMethod.id }),
-      });
+      const response = await fetch(
+        "http://localhost:3001/create-payment-intent",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paymentMethodId: paymentMethod.id }),
+        }
+      );
 
       const paymentIntent = await response.json();
 
-      const { error: confirmError } = await stripe.confirmCardPayment(paymentIntent.client_secret);
+      const { error: confirmError } = await stripe.confirmCardPayment(
+        paymentIntent.client_secret
+      );
 
       if (confirmError) {
         setErrorMessage(confirmError.message);
       } else {
-        setPaymentStatus('Payment successful!');
+        setPaymentStatus("Payment successful!");
       }
     }
   };
