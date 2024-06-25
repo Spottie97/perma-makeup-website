@@ -12,7 +12,7 @@ function Contact() {
   };
 
   return (
-    <div>
+    <div className="container section section-dark">
       <h1>Contact Us</h1>
       <form onSubmit={handleContact}>
         <input
@@ -35,7 +35,7 @@ function Contact() {
           onChange={(e) => setMessage(e.target.value)}
           required
         ></textarea>
-        <button type="submit">Send Message</button>
+        <input type="submit" value="Send Message" />
       </form>
     </div>
   );
