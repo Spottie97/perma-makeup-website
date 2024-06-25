@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, useJsApiLoader } from '@react-google-maps/api';
 
 function Contact() {
   const [name, setName] = useState('');
@@ -21,6 +21,15 @@ function Contact() {
     lat: -25.747867, // Replace with the latitude of your studio location
     lng: 28.229271, // Replace with the longitude of your studio location
   };
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: "YOUR_GOOGLE_MAPS_API_KEY",
+    libraries: ["places"],
+  });
+
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="container section section-dark contact-section">
@@ -48,11 +57,10 @@ function Contact() {
         ></textarea>
         <input type="submit" value="Send Message" />
       </form>
-      <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
-        <GoogleMap mapContainerStyle={mapContainerStyle} center={center} zoom={15}>
-          <Marker position={center} />
-        </GoogleMap>
-      </LoadScript>
+      <GoogleMap mapContainerStyle={mapContainerStyle} center={center} zoom={15}>
+        {/* Use the new AdvancedMarkerElement */}
+        <google.maps.marker.AdvancedMarkerElement position={center} />
+      </GoogleMap>
     </div>
   );
 }
