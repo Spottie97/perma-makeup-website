@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { GoogleMap, LoadScript, useJsApiLoader } from '@react-google-maps/api';
+import React, { useState, useEffect } from 'react';
+import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 
 function Contact() {
   const [name, setName] = useState('');
@@ -23,9 +23,30 @@ function Contact() {
   };
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "YOUR_GOOGLE_MAPS_API_KEY",
-    libraries: ["places"],
+    googleMapsApiKey: 'YOUR_GOOGLE_MAPS_API_KEY',
+    libraries: ['places'],
   });
+
+  useEffect(() => {
+    if (isLoaded && window.google && window.google.maps) {
+      const map = new window.google.maps.Map(document.getElementById('map'), {
+        center: center,
+        zoom: 15,
+      });
+
+      if (window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement) {
+        new window.google.maps.marker.AdvancedMarkerElement({
+          position: center,
+          map: map,
+        });
+      } else {
+        new window.google.maps.Marker({
+          position: center,
+          map: map,
+        });
+      }
+    }
+  }, [isLoaded]);
 
   if (!isLoaded) {
     return <div>Loading...</div>;
@@ -57,10 +78,7 @@ function Contact() {
         ></textarea>
         <input type="submit" value="Send Message" />
       </form>
-      <GoogleMap mapContainerStyle={mapContainerStyle} center={center} zoom={15}>
-        {/* Use the new AdvancedMarkerElement */}
-        <google.maps.marker.AdvancedMarkerElement position={center} />
-      </GoogleMap>
+      <div id="map" className="map"></div>
     </div>
   );
 }
