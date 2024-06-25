@@ -1,0 +1,93 @@
+/* styles.css */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #1c1c1c; /* Matte Black Background */
+    color: #fff; /* White Text */
+  }
+  
+  header, footer {
+    background-color: #333; /* Darker Black for Header and Footer */
+    padding: 20px;
+    text-align: center;
+  }
+  
+  header nav ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  header nav ul li {
+    display: inline;
+    margin: 0 10px;
+  }
+  
+  header nav ul li a {
+    text-decoration: none;
+    color: #d8b4ff; /* Light Purple Text */
+  }
+  
+  header nav ul li a:hover {
+    color: #a74ac7; /* Darker Purple on Hover */
+  }
+  
+  footer {
+    background-color: #333; /* Darker Black for Footer */
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  footer div a {
+    margin: 0 10px;
+    color: #d8b4ff; /* Light Purple Text */
+    text-decoration: none;
+  }
+  
+  footer div a:hover {
+    color: #a74ac7; /* Darker Purple on Hover */
+  }
+  
+  h1 {
+    color: #d8b4ff; /* Light Purple */
+  }
+  
+  button {
+    background-color: #d8b4ff; /* Light Purple Button */
+    color: #1c1c1c; /* Matte Black Text */
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #a74ac7; /* Darker Purple on Hover */
+  }
+  
+  /* Forms */
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  input, select, textarea {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #555; /* Gray Border */
+    background-color: #333; /* Darker Black Input Background */
+    color: #fff; /* White Text */
+  }
+  
+  input[type="submit"] {
+    background-color: #d8b4ff; /* Light Purple Button */
+    color: #1c1c1c; /* Matte Black Text */
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  input[type="submit"]:hover {
+    background-color: #a74ac7; /* Darker Purple on Hover */
+  }
+  
