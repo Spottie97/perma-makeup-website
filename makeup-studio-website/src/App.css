@@ -1,3 +1,12 @@
+/* General styles */
+body {
+  margin: 0;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: #1c1c1c; /* Matte Black Background */
+  color: #e0e0e0; /* Light Gray Text */
+  overflow-x: hidden;
+}
+
 .App {
   text-align: center;
   position: relative;
@@ -13,6 +22,14 @@
   width: 100%;
   height: 100%;
   z-index: -1; /* Ensure the background is behind other content */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.background-svg {
+  width: 100%;
+  height: 100%;
 }
 
 .container {
@@ -55,16 +72,50 @@
   }
 }
 
-/* New styles for background animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+/* Header and footer styles */
+header, footer {
+  background-color: #141414; /* Darker Black for Header and Footer */
+  padding: 20px;
+  text-align: center;
 }
 
+header nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+header nav ul li {
+  display: inline;
+}
+
+header nav ul li a {
+  text-decoration: none;
+  color: #ff4d4d; /* Deep Red Text */
+  font-weight: bold;
+  padding: 10px;
+  transition: color 0.3s;
+}
+
+header nav ul li a:hover {
+  color: #b30000; /* Darker Red on Hover */
+}
+
+footer div a {
+  margin: 0 10px;
+  color: #ff4d4d; /* Deep Red Text */
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+footer div a:hover {
+  color: #b30000; /* Darker Red on Hover */
+}
+
+/* Typography and animations */
 h1, h2, h3, h4, h5, h6 {
   color: #ff4d4d; /* Deep Red */
   transition: transform 0.3s ease-in-out;
@@ -74,6 +125,16 @@ h1:hover, h2:hover, h3:hover, h4:hover, h5:hover, h6:hover {
   transform: scale(1.1);
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Button styles */
 button {
   background-color: #ff4d4d; /* Deep Red Button */
   color: #1c1c1c; /* Matte Black Text */
@@ -88,6 +149,7 @@ button:hover {
   transform: scale(1.05);
 }
 
+/* Form styles */
 form {
   display: flex;
   flex-direction: column;
@@ -117,48 +179,7 @@ input[type="submit"]:hover {
   transform: scale(1.05);
 }
 
-.header, footer {
-  background-color: #141414; /* Darker Black for Header and Footer */
-  padding: 20px;
-  text-align: center;
-}
-
-.header nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.header nav ul li {
-  display: inline;
-}
-
-.header nav ul li a {
-  text-decoration: none;
-  color: #ff4d4d; /* Deep Red Text */
-  font-weight: bold;
-  padding: 10px;
-  transition: color 0.3s;
-}
-
-.header nav ul li a:hover {
-  color: #b30000; /* Darker Red on Hover */
-}
-
-footer div a {
-  margin: 0 10px;
-  color: #ff4d4d; /* Deep Red Text */
-  text-decoration: none;
-  transition: color 0.3s;
-}
-
-footer div a:hover {
-  color: #b30000; /* Darker Red on Hover */
-}
-
+/* Section styles */
 .hero {
   background: linear-gradient(135deg, #1c1c1c, #ff4d4d); /* Gradient from Matte Black to Deep Red */
   height: 400px;

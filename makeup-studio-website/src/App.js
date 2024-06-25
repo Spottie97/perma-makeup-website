@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './components/Home';
@@ -7,7 +7,7 @@ import About from './components/About';
 import Services from './components/Services';
 import Booking from './components/Booking';
 import Contact from './components/Contact';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import './App.css';
 
 function App() {
   return (
@@ -15,15 +15,17 @@ function App() {
       <Router>
         <Header />
         <div className="background-animation">
-          <svg width="100%" height="100%" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
-            <rect width="100%" height="100%" fill="#1c1c1c" />
-            <circle cx="200" cy="200" r="100" fill="#ff4d4d">
-              <animate attributeName="cx" values="200;600;200" dur="10s" repeatCount="indefinite" />
-              <animate attributeName="cy" values="200;100;200" dur="10s" repeatCount="indefinite" />
-            </circle>
-            <circle cx="600" cy="100" r="50" fill="#b30000">
-              <animate attributeName="cx" values="600;200;600" dur="10s" repeatCount="indefinite" />
-              <animate attributeName="cy" values="100;300;100" dur="10s" repeatCount="indefinite" />
+          <svg className="background-svg" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style={{ stopColor: '#ff4d4d', stopOpacity: 1 }} />
+                <stop offset="100%" style={{ stopColor: '#b30000', stopOpacity: 1 }} />
+              </linearGradient>
+            </defs>
+            <circle cx="50%" cy="50%" r="45%" fill="url(#grad1)">
+              <animate attributeName="r" values="45%;50%;45%" dur="10s" repeatCount="indefinite" />
+              <animate attributeName="cx" values="50%;55%;50%" dur="10s" repeatCount="indefinite" />
+              <animate attributeName="cy" values="50%;45%;50%" dur="10s" repeatCount="indefinite" />
             </circle>
           </svg>
         </div>
