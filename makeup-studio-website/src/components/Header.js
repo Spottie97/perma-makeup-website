@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import './styles.css'; // Make sure styles are applied
 
 function Header() {
   return (

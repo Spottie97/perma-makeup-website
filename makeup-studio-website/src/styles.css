@@ -111,7 +111,7 @@ body {
   }
   
   .hero {
-    background: url('/path-to-your-hero-image.jpg') no-repeat center center;
+    background: url('./assets/images/hero-image.jpg') no-repeat center center;
     background-size: cover;
     height: 400px;
     display: flex;
