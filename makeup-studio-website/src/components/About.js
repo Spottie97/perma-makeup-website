@@ -5,9 +5,9 @@ function About() {
     <div className="section section-dark about-section">
       <div className="content">
         <h1>About Us</h1>
-        <p>Information about the studio and the artist.</p>
+        <p>We are dedicated to enhancing your natural beauty with our professional permanent makeup services.</p>
       </div>
-      <img src="/path-to-about-image.jpg" alt="About" />
+      <img src="/path-to-about-image.jpg" alt="About Us" />
     </div>
   );
 }
