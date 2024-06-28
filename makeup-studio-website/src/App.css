@@ -2,7 +2,7 @@
 body {
   margin: 0;
   font-family: 'Helvetica Neue', Arial, sans-serif;
-  background-color: #1c1c1c; /* Matte Black Background */
+  background-color: #0f0f0f; /* Matte Black Background */
   color: #e0e0e0; /* Light Gray Text */
   overflow-x: hidden;
 }
@@ -14,7 +14,7 @@ body {
 }
 
 header, footer {
-  background-color: #141414; /* Darker Black for Header and Footer */
+  background-color: #1a1a1a; /* Darker Black for Header and Footer */
   color: #e0e0e0; /* Light Gray Text */
   padding: 20px;
   text-align: center;
@@ -124,15 +124,16 @@ input[type="submit"]:hover {
 /* Section styles */
 .section {
   padding: 60px 20px;
+  margin: 40px 0;
 }
 
 .section-light {
-  background: linear-gradient(135deg, #1c1c1c, #a64ca6); /* Gradient from Matte Black to Medium Purple */
+  background: linear-gradient(135deg, #0f0f0f, #a64ca6); /* Gradient from Matte Black to Medium Purple */
   color: #fff; /* Light Text */
 }
 
 .section-dark {
-  background-color: #1c1c1c;
+  background-color: #0f0f0f;
   color: #e0e0e0;
 }
 
@@ -167,6 +168,7 @@ input[type="submit"]:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 20px;
 }
 
 .about-section img {
