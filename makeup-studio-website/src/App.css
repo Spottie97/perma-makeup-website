@@ -35,30 +35,30 @@ header nav ul li {
 
 header nav ul li a {
   text-decoration: none;
-  color: #ff4d4d; /* Deep Red Text */
+  color: #a64ca6; /* Medium Purple Text */
   font-weight: bold;
   padding: 10px;
   transition: color 0.3s;
 }
 
 header nav ul li a:hover {
-  color: #b30000; /* Darker Red on Hover */
+  color: #823682; /* Darker Purple on Hover */
 }
 
 footer div a {
   margin: 0 10px;
-  color: #ff4d4d; /* Deep Red Text */
+  color: #a64ca6; /* Medium Purple Text */
   text-decoration: none;
   transition: color 0.3s;
 }
 
 footer div a:hover {
-  color: #b30000; /* Darker Red on Hover */
+  color: #823682; /* Darker Purple on Hover */
 }
 
 /* Typography and animations */
 h1, h2, h3, h4, h5, h6 {
-  color: #ff4d4d; /* Deep Red */
+  color: #ffffff; /* White */
   transition: transform 0.3s ease-in-out;
 }
 
@@ -68,7 +68,7 @@ h1:hover, h2:hover, h3:hover, h4:hover, h5:hover, h6:hover {
 
 /* Button styles */
 button {
-  background-color: #ff4d4d; /* Deep Red Button */
+  background-color: #a64ca6; /* Medium Purple Button */
   color: #1c1c1c; /* Matte Black Text */
   border: none;
   padding: 10px 20px;
@@ -78,7 +78,7 @@ button {
 }
 
 button:hover {
-  background-color: #b30000; /* Darker Red on Hover */
+  background-color: #823682; /* Darker Purple on Hover */
   transform: scale(1.05);
 }
 
@@ -102,7 +102,7 @@ input, select, textarea {
 }
 
 input[type="submit"] {
-  background-color: #ff4d4d; /* Deep Red Button */
+  background-color: #a64ca6; /* Medium Purple Button */
   color: #1c1c1c; /* Matte Black Text */
   border: none;
   padding: 10px 20px;
@@ -110,7 +110,7 @@ input[type="submit"] {
 }
 
 input[type="submit"]:hover {
-  background-color: #b30000; /* Darker Red on Hover */
+  background-color: #823682; /* Darker Purple on Hover */
   transform: scale(1.05);
 }
 
@@ -127,7 +127,7 @@ input[type="submit"]:hover {
 }
 
 .section-light {
-  background: linear-gradient(135deg, #1c1c1c, #ff4d4d); /* Gradient from Matte Black to Deep Red */
+  background: linear-gradient(135deg, #1c1c1c, #a64ca6); /* Gradient from Matte Black to Medium Purple */
   color: #fff; /* Light Text */
 }
 
