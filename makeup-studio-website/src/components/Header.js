@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import CartIcon from './CartIcon';
 
 function Header() {
   return (
@@ -12,8 +13,10 @@ function Header() {
           <li><Link to="/shop">Shop</Link></li>
           <li><Link to="/booking">Booking</Link></li>
           <li><Link to="/contact">Contact</Link></li>
-          
         </ul>
+        <div className="cart-icon-wrapper">
+          <CartIcon />
+        </div>
       </nav>
     </header>
   );

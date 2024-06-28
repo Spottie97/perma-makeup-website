@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import CartContext from './CartContext';
 
 const products = [
   {
@@ -22,10 +23,15 @@ const products = [
     price: '$40.00',
     image: '/path-to-product3-image.jpg',
   },
-  // Add more products as needed
 ];
 
 function Shop() {
+  const { dispatch } = useContext(CartContext);
+
+  const addToCart = (product) => {
+    dispatch({ type: 'ADD_TO_CART', payload: product });
+  };
+
   return (
     <div className="section section-light">
       <h1>Shop</h1>
@@ -36,7 +42,7 @@ function Shop() {
             <h3>{product.name}</h3>
             <p>{product.description}</p>
             <p>{product.price}</p>
-            <button>Add to Cart</button>
+            <button onClick={() => addToCart(product)}>Add to Cart</button>
           </div>
         ))}
       </div>

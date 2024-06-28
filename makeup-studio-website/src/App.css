@@ -19,6 +19,7 @@ header, footer {
   color: #e0e0e0; /* Light Gray Text */
   padding: 20px;
   text-align: center;
+  position: relative;
 }
 
 header nav ul {
@@ -44,6 +45,30 @@ header nav ul li a {
 
 header nav ul li a:hover {
   color: #823682; /* Darker Purple on Hover */
+}
+
+.cart-icon-wrapper {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.cart-icon {
+  position: relative;
+  color: #a64ca6; /* Medium Purple */
+  font-size: 24px;
+  text-decoration: none;
+}
+
+.cart-count {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: #823682; /* Darker Purple */
+  color: white;
+  border-radius: 50%;
+  padding: 5px 10px;
+  font-size: 12px;
 }
 
 footer div a {
