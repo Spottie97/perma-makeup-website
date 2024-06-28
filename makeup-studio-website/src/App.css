@@ -131,6 +131,9 @@ input[type="submit"]:hover {
 .section-light {
   background: linear-gradient(135deg, #0f0f0f, #a64ca6); /* Gradient from Matte Black to Medium Purple */
   color: #fff; /* Light Text */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center align items */
 }
 
 .section-dark {
