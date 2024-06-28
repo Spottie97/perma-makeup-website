@@ -2,7 +2,7 @@ import React from 'react';
 
 function About() {
   return (
-    <div>
+    <div className="section section-dark">
       <h1>About Us</h1>
       <p>Information about the studio and the artist.</p>
     </div>

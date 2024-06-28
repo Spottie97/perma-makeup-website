@@ -13,7 +13,7 @@ function Booking() {
   };
 
   return (
-    <div>
+    <div className="section section-dark">
       <h1>Book an Appointment</h1>
       <form onSubmit={handleBooking}>
         <input

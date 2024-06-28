@@ -2,8 +2,9 @@
 body {
   margin: 0;
   font-family: 'Helvetica Neue', Arial, sans-serif;
-  background-color: #f5f5f5; /* Light gray background */
-  color: #333; /* Dark gray text */
+  background-color: #1c1c1c; /* Matte Black Background */
+  color: #e0e0e0; /* Light Gray Text */
+  overflow-x: hidden;
 }
 
 .App {
@@ -13,8 +14,8 @@ body {
 }
 
 header, footer {
-  background-color: #282c34; /* Dark background for header and footer */
-  color: white;
+  background-color: #141414; /* Darker Black for Header and Footer */
+  color: #e0e0e0; /* Light Gray Text */
   padding: 20px;
   text-align: center;
 }
@@ -34,33 +35,54 @@ header nav ul li {
 
 header nav ul li a {
   text-decoration: none;
-  color: white;
+  color: #ff4d4d; /* Deep Red Text */
+  font-weight: bold;
   padding: 10px;
+  transition: color 0.3s;
 }
 
 header nav ul li a:hover {
-  text-decoration: underline;
+  color: #b30000; /* Darker Red on Hover */
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+footer div a {
+  margin: 0 10px;
+  color: #ff4d4d; /* Deep Red Text */
+  text-decoration: none;
+  transition: color 0.3s;
 }
 
+footer div a:hover {
+  color: #b30000; /* Darker Red on Hover */
+}
+
+/* Typography and animations */
+h1, h2, h3, h4, h5, h6 {
+  color: #ff4d4d; /* Deep Red */
+  transition: transform 0.3s ease-in-out;
+}
+
+h1:hover, h2:hover, h3:hover, h4:hover, h5:hover, h6:hover {
+  transform: scale(1.1);
+}
+
+/* Button styles */
 button {
-  background-color: #282c34; /* Dark button background */
-  color: white;
+  background-color: #ff4d4d; /* Deep Red Button */
+  color: #1c1c1c; /* Matte Black Text */
   border: none;
   padding: 10px 20px;
   cursor: pointer;
   margin: 10px 0;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 button:hover {
-  background-color: #444; /* Darker background on hover */
+  background-color: #b30000; /* Darker Red on Hover */
+  transform: scale(1.05);
 }
 
+/* Form styles */
 form {
   display: flex;
   flex-direction: column;
@@ -70,30 +92,107 @@ form {
 
 input, select, textarea {
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #444; /* Dark Gray Border */
+  background-color: #2c2c2c; /* Darker Gray Input Background */
+  color: #e0e0e0; /* Light Gray Text */
   border-radius: 4px;
   width: 100%;
   box-sizing: border-box;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 input[type="submit"] {
-  background-color: #282c34; /* Dark button background */
-  color: white;
+  background-color: #ff4d4d; /* Deep Red Button */
+  color: #1c1c1c; /* Matte Black Text */
   border: none;
   padding: 10px 20px;
   cursor: pointer;
 }
 
 input[type="submit"]:hover {
-  background-color: #444; /* Darker background on hover */
+  background-color: #b30000; /* Darker Red on Hover */
+  transform: scale(1.05);
 }
 
-h1, h2, h3, h4, h5, h6 {
-  color: #282c34; /* Dark color for headings */
-  margin-top: 0;
+/* Container styles */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-p {
-  line-height: 1.6;
-  margin: 20px 0;
+/* Section styles */
+.section {
+  padding: 60px 20px;
+}
+
+.section-light {
+  background: linear-gradient(135deg, #1c1c1c, #ff4d4d); /* Gradient from Matte Black to Deep Red */
+  color: #fff; /* Light Text */
+}
+
+.section-dark {
+  background-color: #1c1c1c;
+  color: #e0e0e0;
+}
+
+/* Card styles */
+.card {
+  background-color: #2c2c2c;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.card img {
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+.card h3 {
+  margin: 20px 0 10px;
+}
+
+.card p {
+  margin: 0 0 20px;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+}
+
+/* About section styles */
+.about-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.about-section img {
+  max-width: 45%;
+  border-radius: 8px;
+}
+
+.about-section .content {
+  max-width: 50%;
+}
+
+/* Contact section styles */
+.contact-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contact-section form {
+  max-width: 600px;
+  width: 100%;
+}
+
+.map {
+  width: 100%;
+  height: 400px;
+  margin-top: 20px;
+  border: 0;
 }
