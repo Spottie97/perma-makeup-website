@@ -19,7 +19,6 @@ header, footer {
   color: #e0e0e0; /* Light Gray Text */
   padding: 20px;
   text-align: center;
-  position: relative;
 }
 
 header nav ul {
@@ -235,4 +234,238 @@ input[type="submit"]:hover {
   height: 400px;
   margin-top: 20px;
   border: 0;
+}
+
+/* Services styles */
+.services-section h1 {
+  font-size: 36px;
+  margin-bottom: 40px;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  justify-items: center;
+}
+
+.service-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+}
+
+.service-card:hover {
+  transform: translateY(-10px);
+}
+
+.service-image {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.service-card h3 {
+  font-size: 24px;
+  color: #1c1c1c; /* Matte Black Text */
+}
+
+/* Brows section styles */
+.brows-section h1 {
+  font-size: 36px;
+  margin-bottom: 40px;
+}
+
+.brows-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+}
+
+.brows-image {
+  width: 300px;
+  border-radius: 8px;
+}
+
+.brows-options {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.brow-option {
+  display: flex;
+  justify-content: space-between;
+  background-color: #2c2c2c;
+  padding: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.brow-option:hover {
+  background-color: #3c3c3c;
+  transform: translateY(-5px);
+}
+
+/* Lips section styles */
+.lips-section h1 {
+  font-size: 36px;
+  margin-bottom: 40px;
+}
+
+.lips-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+}
+
+.lips-image {
+  width: 300px;
+  border-radius: 8px;
+}
+
+.lips-options {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.lip-option {
+  display: flex;
+  justify-content: space-between;
+  background-color: #2c2c2c;
+  padding: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.lip-option:hover {
+  background-color: #3c3c3c;
+  transform: translateY(-5px);
+}
+
+/* Eyeliner section styles */
+.eyeliner-section h1 {
+  font-size: 36px;
+  margin-bottom: 40px;
+}
+
+.eyeliner-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+}
+
+.eyeliner-image {
+  width: 300px;
+  border-radius: 8px;
+}
+
+.eyeliner-options {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.eyeliner-option {
+  display: flex;
+  justify-content: space-between;
+  background-color: #2c2c2c;
+  padding: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.eyeliner-option:hover {
+  background-color: #3c3c3c;
+  transform: translateY(-5px);
+}
+
+/* Additional styles for the booking page */
+.booking-form select {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 4px;
+  background-color: #2c2c2c;
+  color: #e0e0e0;
+  border: 1px solid #444;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+/* Additional calendar customization */
+.react-calendar__tile--active {
+  background: #a64ca6;
+  color: white;
+  border-radius: 50%;
+}
+
+/* Booking page styles */
+.booking-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 20px;
+  color: #ffffff;
+}
+
+.booking-calendar {
+  flex: 1;
+  padding: 20px;
+  background: #1a1a1a;
+  border-radius: 8px;
+  margin-right: 20px;
+}
+
+.booking-calendar h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.calendar {
+  width: 100%;
+  border: none;
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+.booking-form {
+  flex: 1;
+  padding: 20px;
+  background: #1a1a1a;
+  border-radius: 8px;
+}
+
+.booking-form h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.booking-form input, .booking-form select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #2c2c2c;
+  color: #e0e0e0;
+}
+
+.booking-form input[type="submit"] {
+  background-color: #a64ca6;
+  color: #1c1c1c;
+  border: none;
+  cursor: pointer;
+}
+
+.booking-form input[type="submit"]:hover {
+  background-color: #823682;
 }

@@ -10,6 +10,9 @@ import Booking from './components/Booking';
 import Contact from './components/Contact';
 import Shop from './components/Shop';
 import Cart from './components/Cart';
+import Brows from './components/service-pages/brows';
+import Lips from './components/service-pages/lips';
+import Eyeliner from './components/service-pages/eyeliner';
 import './App.css';
 
 function App() {
@@ -27,6 +30,9 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/shop" element={<Shop />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/brows" element={<Brows />} />
+              <Route path="/lips" element={<Lips />} />
+              <Route path="/eyeliner" element={<Eyeliner />} />
             </Routes>
           </div>
           <Footer />
