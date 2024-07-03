@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import lipsImage from '../../assets/images/lips.jpg'; // Update the path
 
 const lipOptions = [
   { name: 'Blended Ombre Liner', price: 'R1210' },
@@ -17,7 +18,7 @@ function Lips() {
     <div className="section section-light lips-section">
       <h1>Lips</h1>
       <div className="lips-content">
-        <img src="/path-to-lips-image.jpg" alt="Lips" className="lips-image" />
+        <img src={lipsImage} alt="Lips" className="lips-image" />
         <div className="lips-options">
           {lipOptions.map(option => (
             <div key={option.name} className="lip-option" onClick={() => handleOptionClick(option)}>

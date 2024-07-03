@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import eyelinerImage from '../../assets/images/eyeliner.jpg'; // Update the path
 
 const eyelinerOptions = [
   { name: 'Liner Top or Bottom', price: 'R1000' },
@@ -18,7 +19,7 @@ function Eyeliner() {
     <div className="section section-light eyeliner-section">
       <h1>Eyeliner</h1>
       <div className="eyeliner-content">
-        <img src="/path-to-eyeliner-image.jpg" alt="Eyeliner" className="eyeliner-image" />
+        <img src={eyelinerImage} alt="Eyeliner" className="eyeliner-image" />
         <div className="eyeliner-options">
           {eyelinerOptions.map(option => (
             <div key={option.name} className="eyeliner-option" onClick={() => handleOptionClick(option)}>

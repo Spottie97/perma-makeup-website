@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import browsImage from '../../assets/images/brows.jpg'; // Update the path
 
 const browOptions = [
   { name: 'Microblading', price: 'R1500' },
@@ -18,7 +19,7 @@ function Brows() {
     <div className="section section-light brows-section">
       <h1>Eyebrows</h1>
       <div className="brows-content">
-        <img src="/path-to-brows-image.jpg" alt="Brows" className="brows-image" />
+        <img src={browsImage} alt="Brows" className="brows-image" />
         <div className="brows-options">
           {browOptions.map(option => (
             <div key={option.name} className="brow-option" onClick={() => handleOptionClick(option)}>
