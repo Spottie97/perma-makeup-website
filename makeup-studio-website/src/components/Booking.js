@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'eact';
-import Calendar from 'eact-calendar';
-import 'eact-calendar/dist/Calendar.css';
-import { useLocation } from 'eact-router-dom';
+import React, { useState, useEffect } from 'react';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
+import { useLocation } from 'react-router-dom';
 
 const services = [
   { value: 'Brows', label: 'Brows', subServices: ['Microblading', 'Hybrid Brows', 'Powder Brows'] },
