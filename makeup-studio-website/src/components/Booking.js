@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'eact';
+import Calendar from 'eact-calendar';
+import 'eact-calendar/dist/Calendar.css';
+import { useLocation } from 'eact-router-dom';
 
 const services = [
   { value: 'Brows', label: 'Brows', subServices: ['Microblading', 'Hybrid Brows', 'Powder Brows'] },
@@ -17,6 +17,7 @@ function Booking() {
   const query = useQuery();
   const preselectedService = query.get('service') || '';
   const preselectedSubService = query.get('subService') || '';
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [date, setDate] = useState(new Date());
@@ -25,14 +26,17 @@ function Booking() {
   const [subServices, setSubServices] = useState([]);
 
   useEffect(() => {
-    setService(preselectedService);
-  }, [preselectedService]);
-
-  useEffect(() => {
     const selectedService = services.find(s => s.value === service);
-    setSubServices(selectedService ? selectedService.subServices : []);
+    setSubServices(selectedService? selectedService.subServices : []);
     setSubService('');
   }, [service]);
+
+  const handleServiceChange = (e) => {
+    const selectedService = services.find(s => s.value === e.target.value);
+    setSubServices(selectedService? selectedService.subServices : []);
+    setSubService('');
+    setService(e.target.value);
+  };
 
   const handleBooking = (e) => {
     e.preventDefault();
@@ -51,7 +55,7 @@ function Booking() {
           <h2>Book an Appointment</h2>
           <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
           <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <select value={service} onChange={(e) => setService(e.target.value)} required>
+          <select value={service} onChange={handleServiceChange} required>
             <option value="">Select a Service</option>
             {services.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
           </select>
