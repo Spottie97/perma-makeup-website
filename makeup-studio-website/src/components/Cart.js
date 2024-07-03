@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import CartContext from './CartContext';
 
 function Cart() {
-  const { cart, dispatch } = useContext(CartContext);
+  const { cart, dispatch, isLoading } = useContext(CartContext);
 
   const removeFromCart = (item) => {
     dispatch({ type: 'REMOVE_FROM_CART', payload: item });
@@ -12,6 +12,10 @@ function Cart() {
     dispatch({ type: 'CLEAR_CART' });
   };
 
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <div className="section section-light">
       <h1>Your Cart</h1>
@@ -20,8 +24,8 @@ function Cart() {
       ) : (
         <div>
           <ul>
-            {cart.map((item, index) => (
-              <li key={index}>
+            {cart.map((item) => (
+              <li key={item.id}>
                 <img src={item.image} alt={item.name} />
                 <h3>{item.name}</h3>
                 <p>{item.price}</p>
