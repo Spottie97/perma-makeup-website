@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'eact';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 
 function Contact() {
@@ -33,6 +33,7 @@ function Contact() {
           onChange={(e) => setName(e.target.value)}
           required
         />
+        <br />
         <input
           type="email"
           placeholder="Email"
@@ -40,12 +41,14 @@ function Contact() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
+        <br />
         <textarea
           placeholder="Message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           required
         ></textarea>
+        <br />
         <input type="submit" value="Send Message" />
       </form>
       <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
