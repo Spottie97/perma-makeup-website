@@ -5,18 +5,18 @@ const services = [
   {
     id: 1,
     name: 'Brows',
-    image: '/path-to-brows-image.jpg',
+    image: '/makeup-studio-website/src/assets/images/brows.jpg',
   },
   {
     id: 2,
     name: 'Lips',
-    image: '/path-to-lips-image.jpg',
+    image: '/makeup-studio-website/src/assets/images/lips.jpg',
   },
   {
     id: 3,
     name: 'Eyeliner',
-    image: '/path-to-eyeliner-image.jpg',
-  },
+    image: '/makeup-studio-website/src/assets/images/eyeliner.jpg'
+  }
 ];
 
 function Services() {

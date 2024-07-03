@@ -40,8 +40,44 @@ function Booking() {
 
   const handleBooking = (e) => {
     e.preventDefault();
-    // Handle booking logic here
-    alert('Booking submitted');
+  
+    // Get the form data
+    const formData = new FormData(e.target);
+    const name = formData.get('name');
+    const email = formData.get('email');
+    const date = date.toLocaleDateString();
+    const service = formData.get('service');
+    const subService = formData.get('subService');
+  
+    // Create a JSON object to send to the server
+    const bookingData = {
+      name,
+      email,
+      date,
+      service,
+      subService,
+    };
+  
+    // Send a POST request to the server
+    fetch('/book-appointment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(bookingData),
+    })
+   .then((response) => response.json())
+   .then((data) => {
+      if (data.success) {
+        alert('Booking submitted successfully!');
+      } else {
+        alert('Error submitting booking: ', data.error);
+      }
+    })
+   .catch((error) => {
+      console.error('Error submitting booking:', error);
+      alert('Error submitting booking: Please try again later.');
+    });
   };
 
   return (
