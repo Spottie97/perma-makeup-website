@@ -8,7 +8,7 @@ const stripe = Stripe('your-secret-key-here');
 
 app.use(cors());
 app.use(bodyParser.json());
-
+//Payment endpoint
 app.post('/create-payment-intent', async (req, res) => {
   const { paymentMethodId } = req.body;
 
@@ -25,6 +25,16 @@ app.post('/create-payment-intent', async (req, res) => {
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
+});
+
+//Booking endpoint
+app.post('/book-appointment', (req, res) => {
+  const { name, email, date, service, subService } = req.body;
+
+  // Here you can add logic to save the booking to a database or send a confirmation email
+  console.log(`Booking received: ${name}, ${email}, ${date}, ${service}, ${subService}`);
+
+  res.json({ success: true });
 });
 
 app.listen(3001, () => {
