@@ -6,6 +6,7 @@ const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 const fs = require('fs');
 const path = require('path');
+const readline = require('readline');
 
 // Load configuration
 const config = JSON.parse(fs.readFileSync('appsettings.json', 'utf8'));
@@ -35,31 +36,32 @@ function getAccessToken(oAuth2Client) {
   console.log('Authorize this app by visiting this url:', authUrl);
 
   // Wait for the user to authorize the app and provide the authorization code
-  app.get('/auth/callback', (req, res) => {
-    const code = req.query.code;
-    if (!code) {
-      return res.status(400).send('Authorization code is missing');
-    }
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  rl.question('Enter the authorization code: ', (code) => {
+    rl.close();
     oAuth2Client.getToken(code, (err, token) => {
       if (err) {
         console.error('Error retrieving access token', err);
-        return res.status(500).send('Error retrieving access token');
+        return;
       }
       oAuth2Client.setCredentials(token);
 
       // Store the token to disk for later program executions
       fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-        if (err) return console.error(err);
-        console.log('Token stored to', TOKEN_PATH);
+        if (err) return console.error('Failed to write token to file:', err);
+        console.log('Token stored successfully to', TOKEN_PATH);
         setupTransporterAndCalendar(); // Setup after successful authentication
       });
-      res.send('Authentication successful! You can close this tab.');
     });
   });
 }
 
 // Function to setup transporter and calendar
-function setupTransporterAndCalendar() {
+async function setupTransporterAndCalendar() {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -68,9 +70,11 @@ function setupTransporterAndCalendar() {
       clientId: config.google.client_id,
       clientSecret: config.google.client_secret,
       refreshToken: oAuth2Client.credentials.refresh_token,
-      accessToken: oAuth2Client.getAccessToken(),
+      accessToken: await oAuth2Client.getAccessToken(),  // Now correctly inside an async function
     },
   });
+
+  
 
   const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
 
@@ -127,20 +131,26 @@ fs.readFile(TOKEN_PATH, (err, token) => {
     console.log('Token not found or invalid, generating auth URL');
     getAccessToken(oAuth2Client);
   } else {
-    const storedToken = JSON.parse(token);
-    oAuth2Client.setCredentials(storedToken);
+    try {
+      const storedToken = JSON.parse(token);
+      oAuth2Client.setCredentials(storedToken);
 
-    // Use the stored refresh token to obtain a new access token
-    oAuth2Client.getAccessToken().then((tokenResponse) => {
-      if (tokenResponse.token) {
-        oAuth2Client.setCredentials(tokenResponse.token);
-        setupTransporterAndCalendar(); // Setup after successful authentication
-      } else {
-        console.error('Error refreshing access token', tokenResponse.res);
-      }
-    }).catch((err) => {
-      console.error('Error refreshing access token', err);
-    });
+      // Use the stored refresh token to obtain a new access token
+      oAuth2Client.getAccessToken().then((tokenResponse) => {
+        if (tokenResponse.token) {
+          oAuth2Client.setCredentials(tokenResponse.token);
+          setupTransporterAndCalendar(); // Setup after successful authentication
+        } else {
+          console.error('Error refreshing access token', tokenResponse.res);
+        }
+      }).catch((err) => {
+        console.error('Error refreshing access token', err);
+      });
+    } catch (error) {
+      console.error('Error parsing the token file:', error);
+      // If there's an error parsing the token file, assume it's invalid and get a new one
+      getAccessToken(oAuth2Client);
+    }
   }
 });
 
