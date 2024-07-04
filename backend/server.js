@@ -79,11 +79,11 @@ app.post('/book-appointment', async (req, res) => {
       description: `Appointment for ${service} - ${subService}`,
       start: {
         dateTime: new Date(date).toISOString(),
-        timeZone: 'your-time-zone',
+        timeZone: 'Africa/Johannesburg',
       },
       end: {
         dateTime: new Date(new Date(date).getTime() + 60 * 60 * 1000).toISOString(), // 1 hour duration
-        timeZone: 'your-time-zone',
+        timeZone: 'Africa/Johannesburg',
       },
     };
 
@@ -92,7 +92,6 @@ app.post('/book-appointment', async (req, res) => {
       resource: event,
     });
 
-    // Add event to salon owner's Google Calendar
     await calendar.events.insert({
       calendarId: config.email.ownerEmail,
       resource: event,
