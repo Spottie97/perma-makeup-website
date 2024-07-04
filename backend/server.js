@@ -19,20 +19,32 @@ app.use(bodyParser.json());
 const SCOPES = ['https://www.googleapis.com/auth/calendar.events'];
 const TOKEN_PATH = path.join(process.cwd(), 'token.json');
 
+// Google OAuth2 setup
 const oAuth2Client = new google.auth.OAuth2(
   config.google.client_id,
   config.google.client_secret,
   config.google.redirect_uris[0]
 );
 
-function getAccessToken(oAuth2Client, callback) {
+// Load or request tokens
+fs.readFile(TOKEN_PATH, (err, token) => {
+  if (err) {
+    console.log('Token not found or invalid, generating auth URL');
+    getAccessToken(oAuth2Client);
+  } else {
+    oAuth2Client.setCredentials(JSON.parse(token));
+    setupTransporterAndCalendar();
+  }
+});
+
+function getAccessToken(oAuth2Client) {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
   });
   console.log('Authorize this app by visiting this url:', authUrl);
 
-  app.get('/oauth2callback', (req, res) => {
+  app.get('/auth/callback', (req, res) => {
     const code = req.query.code;
     if (!code) {
       return res.status(400).send('Authorization code is missing');
@@ -50,7 +62,7 @@ function getAccessToken(oAuth2Client, callback) {
         console.log('Token stored to', TOKEN_PATH);
       });
       res.send('Authentication successful! You can close this tab.');
-      callback();
+      setupTransporterAndCalendar();
     });
   });
 }
@@ -70,26 +82,6 @@ function setupTransporterAndCalendar() {
 
   const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
 
-  // Payment endpoint
-  app.post('/create-payment-intent', async (req, res) => {
-    const { paymentMethodId } = req.body;
-
-    try {
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: 1000, // Amount in cents
-        currency: 'usd',
-        payment_method: paymentMethodId,
-        confirmation_method: 'manual',
-        confirm: true,
-      });
-
-      res.send({ client_secret: paymentIntent.client_secret });
-    } catch (error) {
-      res.status(500).send({ error: error.message });
-    }
-  });
-
-  // Booking endpoint
   app.post('/book-appointment', async (req, res) => {
     const { name, email, date, service, subService } = req.body;
 
@@ -125,7 +117,7 @@ function setupTransporterAndCalendar() {
 
       // Add event to salon owner's Google Calendar
       await calendar.events.insert({
-        calendarId: config.google.ownerCalendarId,
+        calendarId: config.email.ownerEmail,
         resource: event,
       });
 
@@ -135,18 +127,8 @@ function setupTransporterAndCalendar() {
       res.status(500).json({ error: 'Failed to process booking' });
     }
   });
+
+  app.listen(3001, () => {
+    console.log('Server running on port 3001');
+  });
 }
-
-fs.readFile(TOKEN_PATH, (err, token) => {
-  if (err || !token || token.length === 0) {
-    console.log('Token not found or invalid, generating auth URL');
-    getAccessToken(oAuth2Client, setupTransporterAndCalendar);
-  } else {
-    oAuth2Client.setCredentials(JSON.parse(token));
-    setupTransporterAndCalendar();
-  }
-});
-
-app.listen(3001, () => {
-  console.log('Server running on port 3001');
-});
