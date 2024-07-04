@@ -5,6 +5,7 @@ const cors = require('cors');
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 const fs = require('fs');
+const path = require('path');
 
 // Load configuration
 const config = JSON.parse(fs.readFileSync('appsettings.json', 'utf8'));
@@ -15,92 +16,134 @@ const stripe = Stripe(config.stripe.secretKey);
 app.use(cors());
 app.use(bodyParser.json());
 
-// Google OAuth2 setup
+const SCOPES = ['https://www.googleapis.com/auth/calendar.events'];
+const TOKEN_PATH = path.join(process.cwd(), 'token.json');
+
 const oAuth2Client = new google.auth.OAuth2(
-  config.google.clientId,
-  config.google.clientSecret,
-  config.google.redirectUri
+  config.google.client_id,
+  config.google.client_secret,
+  config.google.redirect_uris[0]
 );
-oAuth2Client.setCredentials({
-  refresh_token: config.google.refreshToken
-});
 
-const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
+function getAccessToken(oAuth2Client, callback) {
+  const authUrl = oAuth2Client.generateAuthUrl({
+    access_type: 'offline',
+    scope: SCOPES,
+  });
+  console.log('Authorize this app by visiting this url:', authUrl);
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    type: 'OAuth2',
-    user: config.email.address,
-    clientId: config.google.clientId,
-    clientSecret: config.google.clientSecret,
-    refreshToken: config.google.refreshToken,
-    accessToken: oAuth2Client.getAccessToken(),
-  },
-});
+  app.get('/oauth2callback', (req, res) => {
+    const code = req.query.code;
+    if (!code) {
+      return res.status(400).send('Authorization code is missing');
+    }
+    oAuth2Client.getToken(code, (err, token) => {
+      if (err) {
+        console.error('Error retrieving access token', err);
+        return res.status(500).send('Error retrieving access token');
+      }
+      oAuth2Client.setCredentials(token);
 
-// Payment endpoint
-app.post('/create-payment-intent', async (req, res) => {
-  const { paymentMethodId } = req.body;
-
-  try {
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: 1000, // Amount in cents
-      currency: 'usd',
-      payment_method: paymentMethodId,
-      confirmation_method: 'manual',
-      confirm: true,
+      // Store the token to disk for later program executions
+      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+        if (err) return console.error(err);
+        console.log('Token stored to', TOKEN_PATH);
+      });
+      res.send('Authentication successful! You can close this tab.');
+      callback();
     });
+  });
+}
 
-    res.send({ client_secret: paymentIntent.client_secret });
-  } catch (error) {
-    res.status(500).send({ error: error.message });
-  }
-});
+function setupTransporterAndCalendar() {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      type: 'OAuth2',
+      user: config.email.address,
+      clientId: config.google.client_id,
+      clientSecret: config.google.client_secret,
+      refreshToken: oAuth2Client.credentials.refresh_token,
+      accessToken: oAuth2Client.getAccessToken(),
+    },
+  });
 
-// Booking endpoint
-app.post('/book-appointment', async (req, res) => {
-  const { name, email, date, service, subService } = req.body;
+  const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
 
-  try {
-    // Send confirmation email
-    const mailOptions = {
-      from: config.email.address,
-      to: email,
-      subject: 'Booking Confirmation',
-      text: `Dear ${name},\n\nYour booking for ${service} - ${subService} on ${date} has been confirmed.\n\nThank you!`,
-    };
+  // Payment endpoint
+  app.post('/create-payment-intent', async (req, res) => {
+    const { paymentMethodId } = req.body;
 
-    await transporter.sendMail(mailOptions);
+    try {
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: 1000, // Amount in cents
+        currency: 'usd',
+        payment_method: paymentMethodId,
+        confirmation_method: 'manual',
+        confirm: true,
+      });
 
-    // Add event to user's Google Calendar
-    const event = {
-      summary: `${service} - ${subService}`,
-      description: `Appointment for ${service} - ${subService}`,
-      start: {
-        dateTime: new Date(date).toISOString(),
-        timeZone: 'Africa/Johannesburg',
-      },
-      end: {
-        dateTime: new Date(new Date(date).getTime() + 60 * 60 * 1000).toISOString(), // 1 hour duration
-        timeZone: 'Africa/Johannesburg',
-      },
-    };
+      res.send({ client_secret: paymentIntent.client_secret });
+    } catch (error) {
+      res.status(500).send({ error: error.message });
+    }
+  });
 
-    await calendar.events.insert({
-      calendarId: 'primary',
-      resource: event,
-    });
+  // Booking endpoint
+  app.post('/book-appointment', async (req, res) => {
+    const { name, email, date, service, subService } = req.body;
 
-    await calendar.events.insert({
-      calendarId: config.email.ownerEmail,
-      resource: event,
-    });
+    try {
+      // Send confirmation email
+      const mailOptions = {
+        from: config.email.address,
+        to: email,
+        subject: 'Booking Confirmation',
+        text: `Dear ${name},\n\nYour booking for ${service} - ${subService} on ${date} has been confirmed.\n\nThank you!`,
+      };
 
-    res.json({ success: true });
-  } catch (error) {
-    console.error('Error processing booking:', error);
-    res.status(500).json({ error: 'Failed to process booking' });
+      await transporter.sendMail(mailOptions);
+
+      // Add event to user's Google Calendar
+      const event = {
+        summary: `${service} - ${subService}`,
+        description: `Appointment for ${service} - ${subService}`,
+        start: {
+          dateTime: new Date(date).toISOString(),
+          timeZone: 'your-time-zone',
+        },
+        end: {
+          dateTime: new Date(new Date(date).getTime() + 60 * 60 * 1000).toISOString(), // 1 hour duration
+          timeZone: 'your-time-zone',
+        },
+      };
+
+      await calendar.events.insert({
+        calendarId: 'primary',
+        resource: event,
+      });
+
+      // Add event to salon owner's Google Calendar
+      await calendar.events.insert({
+        calendarId: config.google.ownerCalendarId,
+        resource: event,
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error processing booking:', error);
+      res.status(500).json({ error: 'Failed to process booking' });
+    }
+  });
+}
+
+fs.readFile(TOKEN_PATH, (err, token) => {
+  if (err || !token || token.length === 0) {
+    console.log('Token not found or invalid, generating auth URL');
+    getAccessToken(oAuth2Client, setupTransporterAndCalendar);
+  } else {
+    oAuth2Client.setCredentials(JSON.parse(token));
+    setupTransporterAndCalendar();
   }
 });
 
