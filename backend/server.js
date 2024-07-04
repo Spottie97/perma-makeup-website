@@ -4,21 +4,25 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
+const fs = require('fs');
+
+// Load configuration
+const config = JSON.parse(fs.readFileSync('appsettings.json', 'utf8'));
 
 const app = express();
-const stripe = Stripe('your-secret-key-here');
+const stripe = Stripe(config.stripe.secretKey);
 
 app.use(cors());
 app.use(bodyParser.json());
 
 // Google OAuth2 setup
 const oAuth2Client = new google.auth.OAuth2(
-  'your-client-id',
-  'your-client-secret',
-  'your-redirect-uri'
+  config.google.clientId,
+  config.google.clientSecret,
+  config.google.redirectUri
 );
 oAuth2Client.setCredentials({
-  refresh_token: 'your-refresh-token'
+  refresh_token: config.google.refreshToken
 });
 
 const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
@@ -27,10 +31,10 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     type: 'OAuth2',
-    user: 'your-email@gmail.com',
-    clientId: 'your-client-id',
-    clientSecret: 'your-client-secret',
-    refreshToken: 'your-refresh-token',
+    user: config.email.address,
+    clientId: config.google.clientId,
+    clientSecret: config.google.clientSecret,
+    refreshToken: config.google.refreshToken,
     accessToken: oAuth2Client.getAccessToken(),
   },
 });
@@ -61,7 +65,7 @@ app.post('/book-appointment', async (req, res) => {
   try {
     // Send confirmation email
     const mailOptions = {
-      from: 'your-email@gmail.com',
+      from: config.email.address,
       to: email,
       subject: 'Booking Confirmation',
       text: `Dear ${name},\n\nYour booking for ${service} - ${subService} on ${date} has been confirmed.\n\nThank you!`,
@@ -90,7 +94,7 @@ app.post('/book-appointment', async (req, res) => {
 
     // Add event to salon owner's Google Calendar
     await calendar.events.insert({
-      calendarId: 'owner-email@gmail.com',
+      calendarId: config.email.ownerEmail,
       resource: event,
     });
 
