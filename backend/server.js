@@ -17,7 +17,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar.events'];
-const TOKEN_PATH = path.join(process.cwd(), 'token.json');
+const TOKEN_PATH = path.join(__dirname, 'token.json');
 
 // Google OAuth2 setup
 const oAuth2Client = new google.auth.OAuth2(
@@ -26,47 +26,17 @@ const oAuth2Client = new google.auth.OAuth2(
   config.google.redirect_uris[0]
 );
 
-// Load or request tokens
-fs.readFile(TOKEN_PATH, (err, token) => {
-  if (err) {
-    console.log('Token not found or invalid, generating auth URL');
-    getAccessToken(oAuth2Client);
-  } else {
-    oAuth2Client.setCredentials(JSON.parse(token));
-    setupTransporterAndCalendar();
-  }
-});
-
-function getAccessToken(oAuth2Client) {
+// Function to get access token
+function getAccessToken(oAuth2Client, callback) {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
   });
   console.log('Authorize this app by visiting this url:', authUrl);
-
-  app.get('/auth/callback', (req, res) => {
-    const code = req.query.code;
-    if (!code) {
-      return res.status(400).send('Authorization code is missing');
-    }
-    oAuth2Client.getToken(code, (err, token) => {
-      if (err) {
-        console.error('Error retrieving access token', err);
-        return res.status(500).send('Error retrieving access token');
-      }
-      oAuth2Client.setCredentials(token);
-
-      // Store the token to disk for later program executions
-      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-        if (err) return console.error(err);
-        console.log('Token stored to', TOKEN_PATH);
-      });
-      res.send('Authentication successful! You can close this tab.');
-      setupTransporterAndCalendar();
-    });
-  });
+  callback(); // Keep server running
 }
 
+// Function to setup transporter and calendar
 function setupTransporterAndCalendar() {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -127,8 +97,55 @@ function setupTransporterAndCalendar() {
       res.status(500).json({ error: 'Failed to process booking' });
     }
   });
-
-  app.listen(3001, () => {
-    console.log('Server running on port 3001');
-  });
 }
+
+// Load or request tokens
+fs.readFile(TOKEN_PATH, (err, token) => {
+  if (err || !token) {
+    console.log('Token not found or invalid, generating auth URL');
+    getAccessToken(oAuth2Client, () => {
+      // Ensure the server remains running to handle the callback
+      app.get('/auth/callback', (req, res) => {
+        const code = req.query.code;
+        if (!code) {
+          return res.status(400).send('Authorization code is missing');
+        }
+        oAuth2Client.getToken(code, (err, token) => {
+          if (err) {
+            console.error('Error retrieving access token', err);
+            return res.status(500).send('Error retrieving access token');
+          }
+          oAuth2Client.setCredentials(token);
+
+          // Store the token to disk for later program executions
+          fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+            if (err) return console.error(err);
+            console.log('Token stored to', TOKEN_PATH);
+          });
+          res.send('Authentication successful! You can close this tab.');
+          setupTransporterAndCalendar(); // Setup after successful authentication
+        });
+      });
+    });
+  } else {
+    const storedToken = JSON.parse(token);
+    oAuth2Client.setCredentials(storedToken);
+
+    // Use the stored refresh token to obtain a new access token
+    oAuth2Client.getAccessToken().then((tokenResponse) => {
+      if (tokenResponse.token) {
+        oAuth2Client.setCredentials(tokenResponse.token);
+        setupTransporterAndCalendar(); // Setup after successful authentication
+      } else {
+        console.error('Error refreshing access token', tokenResponse.res);
+      }
+    }).catch((err) => {
+      console.error('Error refreshing access token', err);
+    });
+  }
+});
+
+// Start the server
+app.listen(3001, () => {
+  console.log('Server running on port 3001');
+});
