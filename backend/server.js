@@ -27,13 +27,35 @@ const oAuth2Client = new google.auth.OAuth2(
 );
 
 // Function to get access token
-function getAccessToken(oAuth2Client, callback) {
+function getAccessToken(oAuth2Client) {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
   });
   console.log('Authorize this app by visiting this url:', authUrl);
-  callback(); // Keep server running
+
+  // Wait for the user to authorize the app and provide the authorization code
+  app.get('/auth/callback', (req, res) => {
+    const code = req.query.code;
+    if (!code) {
+      return res.status(400).send('Authorization code is missing');
+    }
+    oAuth2Client.getToken(code, (err, token) => {
+      if (err) {
+        console.error('Error retrieving access token', err);
+        return res.status(500).send('Error retrieving access token');
+      }
+      oAuth2Client.setCredentials(token);
+
+      // Store the token to disk for later program executions
+      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+        if (err) return console.error(err);
+        console.log('Token stored to', TOKEN_PATH);
+        setupTransporterAndCalendar(); // Setup after successful authentication
+      });
+      res.send('Authentication successful! You can close this tab.');
+    });
+  });
 }
 
 // Function to setup transporter and calendar
@@ -103,30 +125,7 @@ function setupTransporterAndCalendar() {
 fs.readFile(TOKEN_PATH, (err, token) => {
   if (err || !token) {
     console.log('Token not found or invalid, generating auth URL');
-    getAccessToken(oAuth2Client, () => {
-      // Ensure the server remains running to handle the callback
-      app.get('/auth/callback', (req, res) => {
-        const code = req.query.code;
-        if (!code) {
-          return res.status(400).send('Authorization code is missing');
-        }
-        oAuth2Client.getToken(code, (err, token) => {
-          if (err) {
-            console.error('Error retrieving access token', err);
-            return res.status(500).send('Error retrieving access token');
-          }
-          oAuth2Client.setCredentials(token);
-
-          // Store the token to disk for later program executions
-          fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-            if (err) return console.error(err);
-            console.log('Token stored to', TOKEN_PATH);
-          });
-          res.send('Authentication successful! You can close this tab.');
-          setupTransporterAndCalendar(); // Setup after successful authentication
-        });
-      });
-    });
+    getAccessToken(oAuth2Client);
   } else {
     const storedToken = JSON.parse(token);
     oAuth2Client.setCredentials(storedToken);
