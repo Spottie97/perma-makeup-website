@@ -90,12 +90,10 @@ async function setupTransporterAndCalendar() {
 // Load or request tokens
 fs.readFile(TOKEN_PATH, async (err, token) => {
   if (err || !token) {
-    // Token not found or invalid, initialize with refresh token from config
     oAuth2Client.setCredentials({
       refresh_token: config.google.refresh_token,
     });
 
-    // Get a new access token and store it
     try {
       const tokenResponse = await oAuth2Client.getAccessToken();
       oAuth2Client.setCredentials(tokenResponse.token);
@@ -114,7 +112,6 @@ fs.readFile(TOKEN_PATH, async (err, token) => {
       setupTransporterAndCalendar();
     } catch (error) {
       console.error('Error parsing the token file:', error);
-      // If there's an error parsing the token file, use the refresh token from config
       oAuth2Client.setCredentials({
         refresh_token: config.google.refresh_token,
       });
