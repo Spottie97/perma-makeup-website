@@ -6,6 +6,7 @@ const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 const fs = require('fs');
 const path = require('path');
+const moment = require('moment-timezone');
 
 // Load configuration
 const config = JSON.parse(fs.readFileSync('appsettings.json', 'utf8'));
@@ -49,36 +50,61 @@ async function setupCalendar() {
       const { name, email, date, service, subService } = req.body;
 
       try {
-        // Send confirmation email
-        const mailOptions = {
+        // Log the received date for debugging
+        console.log('Received date:', date);
+
+        // Convert the received date to a Date object using moment-timezone
+        const bookingDate = moment.tz(date, 'MM/DD/YYYY', 'Africa/Johannesburg');
+        console.log('Converted bookingDate:', bookingDate.format());
+
+        // Set the time portion to a specific time during business hours
+        bookingDate.set({ hour: 10, minute: 0, second: 0, millisecond: 0 });
+        const eventStart = bookingDate.clone();
+        const eventEnd = bookingDate.clone().add(1, 'hour'); // 1 hour duration
+        console.log('Event start:', eventStart.format());
+        console.log('Event end:', eventEnd.format());
+
+        // Send confirmation email to the client
+        const clientMailOptions = {
           from: config.email.address,
           to: email,
           subject: 'Booking Confirmation',
-          text: `Dear ${name},\n\nYour booking for ${service} - ${subService} on ${date} has been confirmed.\n\nThank you!`,
+          text: `Dear ${name},\n\nYour booking for ${service} - ${subService} on ${eventStart.format('LLLL')} has been confirmed.\n\nThank you!`,
         };
 
-        await emailTransporter.sendMail(mailOptions);
+        await emailTransporter.sendMail(clientMailOptions);
 
-        // Add event to user's Google Calendar
+        // Send notification email to the salon owner
+        const ownerMailOptions = {
+          from: config.email.address,
+          to: config.email.ownerEmail,
+          subject: 'New Booking Notification',
+          text: `Dear Owner,\n\nA new booking has been made by ${name} for ${service} - ${subService} on ${eventStart.format('LLLL')}.\n\nClient Email: ${email}\n\nThank you!`,
+        };
+
+        await emailTransporter.sendMail(ownerMailOptions);
+
+        // Create event object to be used for both client and owner calendar
         const event = {
           summary: `${service} - ${subService}`,
           description: `Appointment for ${service} - ${subService}`,
           start: {
-            dateTime: new Date(date).toISOString(),
+            dateTime: eventStart.toISOString(),
             timeZone: 'Africa/Johannesburg', // Valid time zone for South Africa
           },
           end: {
-            dateTime: new Date(new Date(date).getTime() + 60 * 60 * 1000).toISOString(), // 1 hour duration
+            dateTime: eventEnd.toISOString(),
             timeZone: 'Africa/Johannesburg', // Valid time zone for South Africa
           },
         };
 
+        // Insert event into the client's calendar
         await calendar.events.insert({
           calendarId: 'primary',
           resource: event,
         });
 
-        // Add event to salon owner's Google Calendar
+        // Insert event into the salon owner's calendar
         await calendar.events.insert({
           calendarId: config.email.ownerEmail,
           resource: event,
