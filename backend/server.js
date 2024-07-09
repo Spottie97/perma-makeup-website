@@ -19,6 +19,15 @@ app.use(bodyParser.json());
 const SCOPES = ['https://www.googleapis.com/auth/calendar.events'];
 const TOKEN_PATH = path.join(__dirname, 'token.json');
 
+// Nodemailer transport setup with app-specific password
+const emailTransporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: config.email.address,
+    pass: config.email.app_specific_pass,
+  },
+});
+
 // Google OAuth2 setup
 const oAuth2Client = new google.auth.OAuth2(
   config.google.client_id,
@@ -26,23 +35,13 @@ const oAuth2Client = new google.auth.OAuth2(
   config.google.redirect_uris[0]
 );
 
-// Function to set up transporter and calendar
-async function setupTransporterAndCalendar() {
+// Function to set up calendar
+async function setupCalendar() {
   try {
-    const tokenResponse = await oAuth2Client.refreshAccessToken();
-    const accessToken = tokenResponse.credentials.access_token;
+    const tokenResponse = await oAuth2Client.getAccessToken();
+    const accessToken = tokenResponse.token;
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        type: 'OAuth2',
-        user: config.email.address,
-        clientId: config.google.client_id,
-        clientSecret: config.google.client_secret,
-        refreshToken: config.google.refresh_token,
-        accessToken,
-      },
-    });
+    oAuth2Client.setCredentials({ access_token: accessToken });
 
     const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
 
@@ -58,7 +57,7 @@ async function setupTransporterAndCalendar() {
           text: `Dear ${name},\n\nYour booking for ${service} - ${subService} on ${date} has been confirmed.\n\nThank you!`,
         };
 
-        await transporter.sendMail(mailOptions);
+        await emailTransporter.sendMail(mailOptions);
 
         // Add event to user's Google Calendar
         const event = {
@@ -92,7 +91,7 @@ async function setupTransporterAndCalendar() {
       }
     });
   } catch (error) {
-    console.error('Error setting up transporter and calendar:', error);
+    console.error('Error setting up calendar:', error);
   }
 }
 
@@ -102,22 +101,22 @@ fs.readFile(TOKEN_PATH, async (err, token) => {
     // No stored token, use refresh token
     oAuth2Client.setCredentials({ refresh_token: config.google.refresh_token });
     try {
-      await setupTransporterAndCalendar();
+      await setupCalendar();
     } catch (error) {
-      console.error('Error setting up transporter and calendar with refresh token:', error);
+      console.error('Error setting up calendar with refresh token:', error);
     }
   } else {
     // Use stored token
     try {
       const storedToken = JSON.parse(token);
       oAuth2Client.setCredentials(storedToken);
-      await setupTransporterAndCalendar();
+      await setupCalendar();
     } catch (error) {
       console.error('Error parsing the token file:', error);
       // Fallback to refresh token
       oAuth2Client.setCredentials({ refresh_token: config.google.refresh_token });
       try {
-        await setupTransporterAndCalendar();
+        await setupCalendar();
       } catch (tokenError) {
         console.error('Error retrieving access token with refresh token:', tokenError);
       }
