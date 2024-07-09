@@ -65,11 +65,11 @@ async function setupCalendar() {
           description: `Appointment for ${service} - ${subService}`,
           start: {
             dateTime: new Date(date).toISOString(),
-            timeZone: 'your-time-zone',
+            timeZone: 'America/New_York', // Use a valid time zone ID
           },
           end: {
             dateTime: new Date(new Date(date).getTime() + 60 * 60 * 1000).toISOString(), // 1 hour duration
-            timeZone: 'your-time-zone',
+            timeZone: 'America/New_York', // Use a valid time zone ID
           },
         };
 
