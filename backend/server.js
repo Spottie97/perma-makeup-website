@@ -35,7 +35,6 @@ function getAccessToken(oAuth2Client) {
   });
   console.log('Authorize this app by visiting this url:', authUrl);
 
-  // Wait for the user to authorize the app and provide the authorization code
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -62,6 +61,7 @@ function getAccessToken(oAuth2Client) {
 
 // Function to setup transporter and calendar
 async function setupTransporterAndCalendar() {
+  const accessToken = await oAuth2Client.getAccessToken();
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -70,11 +70,9 @@ async function setupTransporterAndCalendar() {
       clientId: config.google.client_id,
       clientSecret: config.google.client_secret,
       refreshToken: oAuth2Client.credentials.refresh_token,
-      accessToken: await oAuth2Client.getAccessToken(),  // Now correctly inside an async function
+      accessToken: accessToken.token,
     },
   });
-
-  
 
   const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
 
@@ -126,7 +124,7 @@ async function setupTransporterAndCalendar() {
 }
 
 // Load or request tokens
-fs.readFile(TOKEN_PATH, (err, token) => {
+fs.readFile(TOKEN_PATH, async (err, token) => {
   if (err || !token) {
     console.log('Token not found or invalid, generating auth URL');
     getAccessToken(oAuth2Client);
@@ -136,16 +134,13 @@ fs.readFile(TOKEN_PATH, (err, token) => {
       oAuth2Client.setCredentials(storedToken);
 
       // Use the stored refresh token to obtain a new access token
-      oAuth2Client.getAccessToken().then((tokenResponse) => {
-        if (tokenResponse.token) {
-          oAuth2Client.setCredentials(tokenResponse.token);
-          setupTransporterAndCalendar(); // Setup after successful authentication
-        } else {
-          console.error('Error refreshing access token', tokenResponse.res);
-        }
-      }).catch((err) => {
-        console.error('Error refreshing access token', err);
-      });
+      const tokenResponse = await oAuth2Client.getAccessToken();
+      if (tokenResponse.token) {
+        oAuth2Client.setCredentials(tokenResponse.token);
+        setupTransporterAndCalendar(); // Setup after successful authentication
+      } else {
+        console.error('Error refreshing access token', tokenResponse.res);
+      }
     } catch (error) {
       console.error('Error parsing the token file:', error);
       // If there's an error parsing the token file, assume it's invalid and get a new one
